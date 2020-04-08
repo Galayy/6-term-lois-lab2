@@ -67,30 +67,19 @@ class ExpressionHolder {
         let formula = this.expression;
         let testSymbol = 'A';
         let negative = /\(![A-Z01]\)/g;
-        let disj = /\([A-Z01]\|[A-Z01]\)/g;
-        let konj = /\([A-Z01]&[A-Z01]\)/g;
-
+        let expression =  /\([A-Z01]([|&~][A-Z01])+\)/g;
         let impl = /\([A-Z01]->[A-Z01]\)/g;
-        let equiv = /\([A-Z01]~[A-Z01]\)/g;
         formula = formula.replace(negative, testSymbol);
 
-        while (formula.match(konj) !== null) {
-            formula = formula.replace(konj, testSymbol);
-        }
-        while (formula.match(disj) !== null) {
-            formula = formula.replace(disj, testSymbol);
+        while (formula.match(expression) !== null) {
+            formula = formula.replace(expression, testSymbol);
         }
         while (formula.match(impl) !== null) {
             formula = formula.replace(impl, testSymbol);
         }
-        while (formula.match(equiv) !== null) {
-            formula = formula.replace(equiv, testSymbol);
-        }
 
-        while (formula.match(/([A-Z01]|\(A\))\|([A-Z01]|\(A\))/g) !== null
-        || formula.match(/([A-Z01]|\(A\))&([A-Z01]|\(A\))/g) !== null) {
-            formula = formula.replace(/([A-Z01]|\(A\))\|([A-Z01]|\(A\))/g, testSymbol);
-            formula = formula.replace(/([A-Z01]|\(A\))&([A-Z01]|\(A\))/g, testSymbol);
+        while (formula.match(/^([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))$/) !== null) {
+            formula = formula.replace(/^([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))$/, testSymbol);
         }
 
         return formula.match(/^(\(!)?[A01]\)?$/) !== null;
@@ -98,7 +87,6 @@ class ExpressionHolder {
 
     static makePDNF(table, arrayWithLiteral, countRow) {
         let resultColumn = arrayWithLiteral.length;
-        let result = "(";
         let array = [];
         for (let index = 0; index < countRow; index++) {
             if (table[index][resultColumn] === "1") {
@@ -106,8 +94,7 @@ class ExpressionHolder {
                 array.push(formula);
             }
         }
-        result += array.join("|") + ")";
-        return result;
+        return array.join("|");
     }
 
     static makeSubFormulaForRow(row, arrayWithLiteral) {
