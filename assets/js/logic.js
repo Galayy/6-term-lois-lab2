@@ -110,7 +110,7 @@ class ExpressionHolder {
         for (let index = 0; index < countRow; index++) {
             array += ExpressionHolder.makeSubFormulaForRow(table[index], arrayWithLiteral);
             if (index !== countRow - 1) {
-                array += "&";
+                array += "|";
             }
             if (index < countRow - 2) {
                 array += '(';
@@ -136,7 +136,7 @@ class ExpressionHolder {
                 formula += arrayWithLiteral[index];
             }
             if (index !== arrayWithLiteral.length - 1) {
-                formula += "|";
+                formula += "&";
             }
             if (index < arrayWithLiteral.length - 2) {
                 formula += '(';
