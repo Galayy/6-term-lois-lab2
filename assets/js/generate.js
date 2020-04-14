@@ -9,8 +9,7 @@ function generateFormula() {
         let operatorType = Math.floor(Math.random() * GRAMMAR.binaryOperation.length);
         formula = formula.concat(GRAMMAR.binaryOperation[operatorType]).concat(generateElement());
     }
-    formula = formula.concat(")");
-    return formula;
+    return formula.concat(")");
 }
 
 function generateElement() {

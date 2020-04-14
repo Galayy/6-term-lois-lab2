@@ -37,7 +37,20 @@ class Controller {
         let result = ExpressionHolder.makePDNF(table, arrayWithLiteral, countRow);
 
         this.calculatorView.renderTable(table, arrayWithLiteral);
-        this.calculatorView.renderTextResult(result);
+        this.calculatorView.renderTextResult(result === "" ? "0" : result);
+    }
+
+    buildTest(formula) {
+        this.holder.addExpression(formula);
+        if (!this.holder.checkBracket() || !this.holder.isFormula()) {
+            return;
+        }
+
+        let arrayWithLiteral = this.holder.getArrayWithLiteral();
+        let countRow = Math.pow(2, arrayWithLiteral.length);
+        let table = this.holder.madeTruthTable(arrayWithLiteral, countRow);
+
+        return ExpressionHolder.makePDNF(table, arrayWithLiteral, countRow);
     }
 }
 
@@ -67,7 +80,7 @@ class ExpressionHolder {
         let formula = this.expression;
         let testSymbol = 'A';
         let negative = /\(![A-Z01]\)/g;
-        let expression =  /\([A-Z01]([|&~][A-Z01])+\)/g;
+        let expression =  /\([A-Z01][|&~][A-Z01]\)/g;
         let impl = /\([A-Z01]->[A-Z01]\)/g;
         formula = formula.replace(negative, testSymbol);
 
@@ -78,8 +91,8 @@ class ExpressionHolder {
             formula = formula.replace(impl, testSymbol);
         }
 
-        while (formula.match(/^([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))$/) !== null) {
-            formula = formula.replace(/^([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))$/, testSymbol);
+        while (formula.match(/([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))/g) !== null) {
+            formula = formula.replace(/([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))/g, testSymbol);
         }
 
         return formula.match(/^(\(!)?[A01]\)?$/) !== null;
@@ -102,6 +115,7 @@ class ExpressionHolder {
         if (arrayWithLiteral.length > 1) {
             formula += "(";
         }
+
         for (let index = 0; index < arrayWithLiteral.length; index++) {
             if (row[index] === "0") {
                 formula += "(!" + arrayWithLiteral[index] + ")";
@@ -111,9 +125,12 @@ class ExpressionHolder {
             if (index !== arrayWithLiteral.length - 1) {
                 formula += "&";
             }
+            if (index < arrayWithLiteral.length - 2) {
+                formula += '(';
+            }
         }
-        if (arrayWithLiteral.length > 1) {
-            formula += ")";
+        for (let index = 0; index < arrayWithLiteral.length - 1; index++) {
+            formula += ')';
         }
         return formula;
     }

@@ -1,0 +1,94 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.button {
+    margin: 5px 10px;
+  
+    display: block;
+    overflow: hidden;
+    outline: none;
+    
+    border: 3px solid #68bf4e;
+    border-radius: 2px;   
+}
+
+span {
+    font-size: 24px;
+}
+
+a {
+    text-decoration: none;
+    color: #68bf4e;
+    outline: none;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#questLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#answer {
+    text-align: center;
+    height: 100px;
+}
+
+#question {
+    height: 200px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+#formula {
+    margin: 5px auto;
+
+    display: block;
+    overflow: hidden;
+    outline: none;
+
+    color: #68bf4e;
+    border-radius: 2px;
+
+    font-size: 24px;
+    width: 580px;
+}
+
+#trueLabel, #falseLabel {
+    font-size: 24px;
+}
+
+#questSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.radio {
+	width: 24px;
+    height: 24px;
+}
+
+#score {
+    font-size: 150px;
+    color: #68bf4e;
+}
+
+#resultSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}

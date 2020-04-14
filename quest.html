@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/generated/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/question-style.css">
+    <title>QUESTION</title>
+</head>
+
+<body onload="createQuestion()">
+<div id="questSection">
+    <div id="question">
+        <span>Является ли формула СДНФ?</span>
+        <label id="formula"></label>
+    </div>
+
+    <form id="answer">
+        <input type="radio" id="true" name="radio" class="radio" checked="true">
+        <label for="true" id="trueLabel">Да</label>
+        <input type="radio" id="false" name="radio" class="radio">
+        <label for="false" id="falseLabel">Нет</label>
+    </form>
+
+    <button class="button" id="nextButton" onclick="next()"><span>Далее</span></button>
+</div>
+
+<div id="resultSection">
+    <span>Your score</span>
+    <span id="score"></span>
+    <button class="button"><a href="index.html">Назад</a></button>
+</div>
+
+<script src="assets/js/generated/jquery-3.3.1.slim.min.js"></script>
+<script src="assets/js/generated/bootstrap.min.js"></script>
+<script src="assets/js/logic.js"></script>
+<script src="assets/js/quest.js"></script>
+<script src="assets/js/generate.js"></script>
+</body>
+</html>
