@@ -83,6 +83,10 @@ class ExpressionHolder {
         let expression = /\((\(![A-Z01]\)|[A-Z01]|\(A\))[|&~](\(![A-Z01]\)|[A-Z01]|\(A\))\)/g;
         let impl = /\((\(![A-Z01]\)|[A-Z01]|\(A\))->(\(![A-Z01]\)|[A-Z01]|\(A\))\)/g;
 
+        while (formula.match(negative) !== null) {
+            formula = formula.replace(negative, testSymbol);
+        }
+
         while (formula.match(expression) !== null) {
             formula = formula.replace(expression, testSymbol);
         }
@@ -99,15 +103,24 @@ class ExpressionHolder {
     }
 
     static makePDNF(table, arrayWithLiteral, countRow) {
-        let resultColumn = arrayWithLiteral.length;
-        let array = [];
+        let array = "";
+        if (countRow > 1) {
+            array += "(";
+        }
         for (let index = 0; index < countRow; index++) {
-            if (table[index][resultColumn] === "1") {
-                let formula = ExpressionHolder.makeSubFormulaForRow(table[index], arrayWithLiteral);
-                array.push(formula);
+            array += ExpressionHolder.makeSubFormulaForRow(table[index], arrayWithLiteral);
+            if (index !== countRow - 1) {
+                array += "&";
+            }
+            if (index < countRow - 2) {
+                array += '(';
             }
         }
-        return array.join("|");
+
+        for (let index = 0; index < countRow - 1; index++) {
+            array += ')';
+        }
+        return array;
     }
 
     static makeSubFormulaForRow(row, arrayWithLiteral) {
@@ -123,7 +136,7 @@ class ExpressionHolder {
                 formula += arrayWithLiteral[index];
             }
             if (index !== arrayWithLiteral.length - 1) {
-                formula += "&";
+                formula += "|";
             }
             if (index < arrayWithLiteral.length - 2) {
                 formula += '(';

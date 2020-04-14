@@ -37,6 +37,7 @@ function next() {
 function generateQuestion() {
     createController();
     let formula = generateFormula();
+    formula = Math.round(Math.random()) === 0 ? formula : controller.buildTest(formula);
     let answer = controller.buildTest(formula) === formula;
 
     return new Question(formula, answer);
