@@ -24,7 +24,7 @@ class Controller {
             this.calculatorView.renderTextResult("Неправильно расставленны скобки");
             return;
         }
-        if (!this.holder.isDnfFormula()) {
+        if (!this.holder.isFormula()) {
             this.calculatorView.clearTable();
             this.calculatorView.renderTextResult("Неправильная формула");
             return;
@@ -42,7 +42,7 @@ class Controller {
 
     buildTest(formula) {
         this.holder.addExpression(formula);
-        if (!this.holder.checkBracket() || !this.holder.isDnfFormula()) {
+        if (!this.holder.checkBracket() || !this.holder.isFormula()) {
             return "";
         }
 
@@ -76,7 +76,7 @@ class ExpressionHolder {
         return bracketCounter === 0;
     }
 
-    isDnfFormula() {
+    isFormula() {
         let formula = this.expression;
         let testSymbol = 'A';
         let negative = /\(![A-Z01]\)/g;
@@ -103,46 +103,66 @@ class ExpressionHolder {
     }
 
     static makePDNF(table, arrayWithLiteral, countRow) {
+        let resultColumn = arrayWithLiteral.length;
         let array = "";
-        if (countRow > 1) {
+        let count = ExpressionHolder.getDijunctionCount(table, countRow, resultColumn);
+
+        if (count > 1) {
             array += "(";
         }
+
+        let groupCount = 0;
         for (let index = 0; index < countRow; index++) {
-            array += ExpressionHolder.makeSubFormulaForRow(table[index], arrayWithLiteral);
-            if (index !== countRow - 1) {
-                array += "|";
-            }
-            if (index < countRow - 2) {
-                array += '(';
+            if (table[index][resultColumn] === "1") {
+                let formula = ExpressionHolder.makeSubFormulaForRow(table[index], arrayWithLiteral);
+                array += formula;
+                if (groupCount !== count - 1) {
+                    array += "|";
+                }
+                if (groupCount < count - 2) {
+                    array += '(';
+                }
+                groupCount++;
             }
         }
 
-        for (let index = 0; index < countRow - 1; index++) {
+        for (let index = 0; index < count - 1; index++) {
             array += ')';
         }
         return array;
     }
 
-    static makeSubFormulaForRow(row, arrayWithLiteral) {
+    static getDijunctionCount(table, countRow, resultColumn){
+        let count = 0;
+
+        for (let index = 0; index < countRow; index++) {
+            if (table[index][resultColumn] === "1") {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    static makeSubFormulaForRow(row, array) {
         let formula = "";
-        if (arrayWithLiteral.length > 1) {
+        if (array.length > 1) {
             formula += "(";
         }
 
-        for (let index = 0; index < arrayWithLiteral.length; index++) {
+        for (let index = 0; index < array.length; index++) {
             if (row[index] === "0") {
-                formula += "(!" + arrayWithLiteral[index] + ")";
+                formula += "(!" + array[index] + ")";
             } else {
-                formula += arrayWithLiteral[index];
+                formula += array[index];
             }
-            if (index !== arrayWithLiteral.length - 1) {
+            if (index !== array.length - 1) {
                 formula += "&";
             }
-            if (index < arrayWithLiteral.length - 2) {
+            if (index < array.length - 2) {
                 formula += '(';
             }
         }
-        for (let index = 0; index < arrayWithLiteral.length - 1; index++) {
+        for (let index = 0; index < array.length - 1; index++) {
             formula += ')';
         }
         return formula;
