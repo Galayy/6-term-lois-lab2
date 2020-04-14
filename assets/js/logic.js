@@ -24,7 +24,7 @@ class Controller {
             this.calculatorView.renderTextResult("Неправильно расставленны скобки");
             return;
         }
-        if (!this.holder.isFormula()) {
+        if (!this.holder.isDnfFormula()) {
             this.calculatorView.clearTable();
             this.calculatorView.renderTextResult("Неправильная формула");
             return;
@@ -42,8 +42,8 @@ class Controller {
 
     buildTest(formula) {
         this.holder.addExpression(formula);
-        if (!this.holder.checkBracket() || !this.holder.isFormula()) {
-            return;
+        if (!this.holder.checkBracket() || !this.holder.isDnfFormula()) {
+            return "";
         }
 
         let arrayWithLiteral = this.holder.getArrayWithLiteral();
@@ -76,26 +76,23 @@ class ExpressionHolder {
         return bracketCounter === 0;
     }
 
-    isFormula() {
+    isDnfFormula() {
         let formula = this.expression;
         let testSymbol = 'A';
         let negative = /\(![A-Z01]\)/g;
-        let expression =  /\([A-Z01][|&~][A-Z01]\)/g;
-        let impl = /\([A-Z01]->[A-Z01]\)/g;
-        formula = formula.replace(negative, testSymbol);
+        let expression = /\((\(![A-Z01]\)|[A-Z01]|\(A\))[|&~](\(![A-Z01]\)|[A-Z01]|\(A\))\)/g;
+        let impl = /\((\(![A-Z01]\)|[A-Z01]|\(A\))->(\(![A-Z01]\)|[A-Z01]|\(A\))\)/g;
 
         while (formula.match(expression) !== null) {
             formula = formula.replace(expression, testSymbol);
         }
+
         while (formula.match(impl) !== null) {
             formula = formula.replace(impl, testSymbol);
         }
 
-        while (formula.match(/([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))/g) !== null) {
-            formula = formula.replace(/([A-Z01]|\(A\))[|&]([A-Z01]|\(A\))/g, testSymbol);
-        }
-
-        return formula.match(/^(\(!)?[A01]\)?$/) !== null;
+        formula = formula.replace(negative, testSymbol);
+        return formula === testSymbol;
     }
 
     static makePDNF(table, arrayWithLiteral, countRow) {
