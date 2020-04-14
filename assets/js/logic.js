@@ -91,7 +91,10 @@ class ExpressionHolder {
             formula = formula.replace(impl, testSymbol);
         }
 
-        formula = formula.replace(negative, testSymbol);
+        while (formula.match(negative) !== null) {
+            formula = formula.replace(negative, testSymbol);
+        }
+
         return formula === testSymbol;
     }
 
